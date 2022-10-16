@@ -1,0 +1,80 @@
+{% extends "app/base1.html" %}
+{% block content %}
+
+<!-- Hero Start -->
+<section>
+    <div class="container" style="padding: 40px 20px 280px 20px">
+        <div class="row justify-content-left">
+            <div class="col-md-8" style="padding-right: 60px;">
+                <form class="login-form" id="fileuploadform" action="{% url 'fileupload' %}" method="post"
+                    enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h5 style="padding-top: 10px;padding-bottom: 10px;">Upload Text File</h5>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group position-relative">
+                                <input type="file" name="files" id="files" required>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-6 form-group">
+                            <button class="btn btn-primary w-100" id="filebutton"><i class="mdi mdi-cloud-upload"></i>
+                                Upload</button>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+            <div class="col-md-4">
+                <div class="app-holder">
+                    <div class="col">
+                        <h4>Fetal Status Report</h4>
+                        <p><small>Fetal Distress status of corresponding CTG data.</small></p>
+                        <div class="report">
+                            <div class="progress-bar"></div>
+                            <div class="current-situation">
+                                <p id="message">No Data Available</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!--end col-->
+        </div>
+        <!--end row-->
+    </div>
+</section>
+{% if pred %}
+<script type="text/javascript">
+    updateReport('{{ pred }}');
+   /* $("#filebutton").on(click, function (e) {
+             e.preventDefault();
+             var file_data = $('#files').prop('files')[0];
+             var fname = $("#fname").val();
+             var formdata = new FormData();
+             formdata.append('fname', fname);
+             formdata.append('files', $('input[type=file]')[0].files[0]);
+             $.ajax(
+                 {
+                     type: "POST",
+                     url: "{% url 'fileupload' %}",
+                     data: formdata,
+                     success: function (data) {
+                         $("#message").text(data);
+                         updateReport(data);
+     
+                     }
+                 }
+             )
+         })*/
+</script>
+{% endif %}
+<!--end section-->
+<!-- Hero End -->
+
+{% endblock %}

@@ -1,0 +1,118 @@
+{% extends "app/base1.html" %}
+{% block content %}
+
+
+<!-- Hero Start -->
+<section>
+    <div class="container" style="padding: 40px 20px 70px 20px">
+        <div class="row justify-content-center">
+            <div class="col-lg-4 col-md-6">
+                <div class="shadow rounded p-4">
+                    <div class="text-center">
+                        <h4 class="mb-4">Reset Password</h4>
+                        <p style="color: #5f47b1;"><small id="message">{{msg}}</small></p>
+                    </div>
+                    <form class="login-form" id="emailverify" method="post">
+                        {% csrf_token %}
+                        <div class="row">
+
+                            <div class="col-lg-12">
+                                <div class="form-group position-relative">
+                                    <label>Your Email <span class="text-danger">*</span></label>
+                                    <input type="email" class="form-control" placeholder="Email" name="email">
+                                </div>
+                            </div>
+                            <div class="col-lg-12 mb-0">
+                                <button id="codebutton" class="btn btn-primary w-100">Send Verification Code</button>
+                            </div>
+
+                        </div>
+                    </form>
+                    <form class="login-form" id="resetform" method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="form-group position-relative">
+                                    <label>Verification Code <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" placeholder="Enter Verification Code"
+                                        name="otp" required="">
+                                </div>
+                            </div>
+
+                            <div class="col-lg-12">
+                                <div class="form-group position-relative">
+                                    <label>New Password <span class="text-danger">*</span></label>
+                                    <input type="password" class="form-control" placeholder="New Password"
+                                        name="password">
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="form-group position-relative">
+                                    <label>Confirm Password <span class="text-danger">*</span></label>
+                                    <input type="password" class="form-control" placeholder="Confirm Password"
+                                        name="cpassword" required="">
+                                </div>
+                            </div>
+
+                            <div class="col-lg-12 mb-0">
+                                <button id="submit" class="btn btn-primary w-100" disabled>Submit</button>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+                <!---->
+            </div>
+            <!--end col-->
+        </div>
+        <!--end row-->
+    </div>
+</section>
+
+<script type="text/javascript">
+    $("#emailverify").submit(function (e) {
+        e.preventDefault();
+        var serializedData = $(this).serialize();
+        $.ajax(
+            {
+                type: "POST",
+                url: "{% url 'reset' %}",
+                data: serializedData,
+                success: function (data) {
+                    if (data == 'Code Sent') {
+                        $("#message").text(data + '. Check your email');
+                        $('#submit').prop('disabled', false);
+                        $("#codebutton").text('Resend Verification Code');
+
+                    } else {
+                        $("#message").text(data);
+                    }
+
+                }
+            }
+        )
+    })
+    $("#resetform").submit(function (e) {
+        e.preventDefault();
+        var serializedData = $(this).serialize();
+        $.ajax(
+            {
+                type: "POST",
+                url: "{% url 'reset' %}",
+                data: serializedData,
+                success: function (data) {
+
+                    if (data == 'success') {
+                        location.href = "{% url 'loginpage' %}";
+                    } else {
+                        $("#message").text(data);
+
+                    }
+
+                }
+            }
+        )
+    })
+</script>
+
+{% endblock %}

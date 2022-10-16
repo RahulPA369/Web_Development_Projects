@@ -1,0 +1,21 @@
+{% extends "app/base1.html" %}
+{% block content %}
+
+
+<div class="landing">
+    <div class="banner">
+        <div class="box">
+            <h2 style="font-weight:bold;">Simple, Efficient,<br />Seamless</h2>
+            <br />
+            <p>A tool to provide doctors with the power of Machine Learning and obtain high accuracy results to analyse
+                a
+                patient's health in a better way.</p>
+
+            <a href="{% if request.session.firstname %}{% url 'home' %}{% else %}{% url 'loginpage' %}{% endif %}"
+                class="btn btn-primary w-100">Get Started</a>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,110 @@
+{% extends "app/base1.html" %}
+{% block content %}
+
+<!-- Hero Start -->
+<section>
+    <div class="container" style="padding: 40px 20px">
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <div class="shadow rounded p-4">
+                    <div class="text-center">
+                        <h4 class="mb-4">Sign Up</h4>
+                        {% if msg %}
+                        <p style="color: #5f47b1;"><small>{{msg}}</small></p>
+                        {% endif %}
+                    </div>
+                    <form class="login-form" action="{% url 'register' %}" method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group position-relative">
+                                    <label>First name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" placeholder="First Name" name="fname"
+                                        value="{{fname}}" required="">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group position-relative">
+                                    <label>Last name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" placeholder="Last Name" name="lname"
+                                        value="{{lname}}" required="">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group position-relative">
+                                    <label>Your Email <span class="text-danger">*</span></label>
+                                    <input type="email" class="form-control" placeholder="Email" name="email"
+                                        value="{{email}}" required="">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group position-relative">
+                                    <label>Password <span class="text-danger">*</span></label>
+                                    <input type="password" class="form-control" id="password" placeholder="Password"
+                                        name="password" required="">
+                                </div>
+                                <p style="color: #5f47b1;"><small id="vpass"></small></p>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group position-relative">
+                                    <label>Confirm Password <span class="text-danger">*</span></label>
+                                    <input type="password" class="form-control" placeholder="Confirm Password"
+                                        name="cpassword" id="cpassword" required="">
+                                </div>
+                                <p style="color: #5f47b1;"><small id="cpass"></small></p>
+                            </div>
+
+                            <div class="col-md-12">
+                                <button id="submit" class="btn btn-primary w-100">Register</button>
+                            </div>
+
+                            <div class="mx-auto">
+                                <p class="mb-0 mt-3"><small class="text-dark mr-2">Already have an account
+                                        ?</small> <a href="{% url 'loginpage' %}"
+                                        class="text-dark font-weight-bold">Sign in</a></p>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!--end col-->
+        </div>
+        <!--end row-->
+    </div>
+</section>
+
+<script type="text/javascript">
+    var pass = document.getElementById("password");
+    var cpass = document.getElementById("cpassword");
+    pass.onkeyup = function () {
+        var str = pass.value;
+        if (str.match(/[a-z]/g) && str.match(
+            /[A-Z]/g) && str.match(
+                /[0-9]/g) && str.match(
+                    /[^a-zA-Z\d]/g) && str.length >= 8) {
+            $('#cpassword').prop('disabled', false);
+            $('#submit').prop('disabled', false);
+            document.getElementById("vpass").innerHTML = '';
+        }
+        else {
+            $('#submit').prop('disabled', true);
+            $('#cpassword').prop('disabled', true);
+            document.getElementById("vpass").innerHTML = "Password must contain <br>At least one number <br>One uppercase and lowercase letter<br>At least 8 or more characters";
+
+        }
+
+    }
+
+    cpass.onkeyup = function () {
+        if (pass.value == cpass.value) {
+            $('#submit').prop('disabled', false);
+            document.getElementById("cpass").innerHTML = '';
+        }
+        else {
+            $('#submit').prop('disabled', true);
+            document.getElementById("cpass").innerHTML = "Password doesnot match";
+
+        }
+    }
+</script>
+{% endblock %}

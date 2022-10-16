@@ -1,0 +1,70 @@
+{% extends "app/base1.html" %}
+{% block content %}
+
+
+<!-- Hero Start -->
+<section>
+    <div class="container" style="padding: 40px 20px 70px 20px">
+        <div class="row justify-content-center">
+            <div class="col-lg-4 col-md-6">
+                <div class="shadow rounded p-4">
+                    <div class="text-center">
+                        <h4 class="mb-4">Account Verification</h4>
+                        <p style="color: #5f47b1;"><small id="message">{{msg}}</small></p>
+                    </div>
+                    <form class="login-form" id="verificationform" method="post">
+                        {% csrf_token %}
+                        <div class="row">
+
+                            <div class="col-lg-12">
+                                <div class="form-group position-relative">
+                                    <label>Your Email <span class="text-danger">*</span></label>
+                                    <input type="email" class="form-control" placeholder="Email" name="email"
+                                        value="{{email}}" readonly>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="form-group position-relative">
+                                    <label>Verification Code <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" placeholder="Enter Verification Code"
+                                        name="otp" required="">
+                                </div>
+                            </div>
+
+                            <div class="col-lg-12 mb-0">
+                                <button class="btn btn-primary w-100">Verify</button>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+                <!---->
+            </div>
+            <!--end col-->
+        </div>
+        <!--end row-->
+    </div>
+</section>
+
+<script type="text/javascript">
+    $("#verificationform").submit(function (e) {
+        e.preventDefault();
+        var serializedData = $(this).serialize();
+        $.ajax(
+            {
+                type: "POST",
+                url: "{% url 'otp' %}",
+                data: serializedData,
+                success: function (data) {
+                    if (data == 'success') {
+                        location.href = "{% url 'loginpage' %}";
+                    }
+                    $("#message").text(data);
+
+                }
+            }
+        )
+    })
+</script>
+
+{% endblock %}

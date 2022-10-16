@@ -1,0 +1,208 @@
+{% extends "app/base1.html" %}
+{% block content %}
+<!-- Hero Start -->
+<section>
+    <div class="container" style="padding: 40px 20px">
+        <div class="row justify-content-left">
+            <div class="col-md-8" style="padding-right: 60px;">
+                <div id="fpredict">
+                    <form class="login-form" id="predictform" method="post">
+                        {% csrf_token %}
+                        <div class="row">
+
+                            <div class="col-md-6">
+                                <div class="form-group position-relative">
+                                    <label>Baseline <span class="text-danger">*</span></label>
+                                    <input type="text" id="bline" class="form-control" placeholder="Baseline"
+                                        name="bline" required="" onchange="valvalidation(this.id);">
+                                    <p id="blinealert" style="color: #5f47b1;"></p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group position-relative">
+                                    <label>Acceleration <span class="text-danger">*</span></label>
+                                    <input type="number" id="acc" class="form-control" placeholder="Acceleration"
+                                        name="acc" step="0.001" required="" onchange="valvalidation(this.id);">
+                                    <p id="accalert" style="color: #5f47b1;"> </p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group position-relative">
+                                    <label>Fetal Movement <span class="text-danger">*</span></label>
+                                    <input type="number" id="fm" class="form-control" placeholder="Fetal Movement"
+                                        name="fm" step="0.001" required="" onchange="valvalidation(this.id);">
+                                    <p id="fmalert" style="color: #5f47b1;"> </p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group position-relative">
+                                    <label>Uterine Contractions <span class="text-danger">*</span></label>
+                                    <input type="number" id="uc" class="form-control" placeholder="Uterine Contractions"
+                                        name="uc" step="0.001" required="" onchange="valvalidation(this.id);">
+                                    <p id="ucalert" style="color: #5f47b1;"> </p>
+                                </div>
+
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group position-relative">
+                                    <label>Light Decelerations <span class="text-danger">*</span></label>
+                                    <input type="number" id="ld" class="form-control" placeholder="Light Decelerations"
+                                        name="ld" step="0.001" required="" onchange="valvalidation(this.id);">
+                                    <p id="ldalert" style="color: #5f47b1;"> </p>
+                                </div>
+
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group position-relative">
+                                    <label>Severe Decelerations <span class="text-danger">*</span></label>
+                                    <input type="number" id="sd" class="form-control" placeholder="Severe Decelerations"
+                                        name="sd" step="0.001" required="" onchange="valvalidation(this.id);">
+                                    <p id="sdalert" style="color: #5f47b1;"> </p>
+                                </div>
+
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group position-relative">
+                                    <label>Prolongued Decelerations <span class="text-danger">*</span></label>
+                                    <input type="number" id="pd" class="form-control"
+                                        placeholder="Prolongued Decelerations" step="0.001" name="pd" required=""
+                                        onchange="valvalidation(this.id);">
+                                    <p id="pdalert" style="color: #5f47b1;"> </p>
+                                </div>
+
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group position-relative">
+                                    <label>Abnormal Short Term Variability <span class="text-danger">*</span></label>
+                                    <input type="number" id="astv" class="form-control"
+                                        placeholder="Abnormal Short Term Variability" name="astv" required=""
+                                        onchange="valvalidation(this.id);">
+                                    <p id="astvalert" style="color: #5f47b1;"> </p>
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-6 form-group">
+                                <button id="predictbutton1" class="btn btn-primary w-100">Predict</button>
+                            </div>
+
+
+                        </div>
+                    </form>
+                </div>
+                <div id="fupload" style="display:none;padding-bottom: 250px;">
+                    <form class="login-form" id="fileuploadform" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group position-relative">
+                                    <h5 style="padding-bottom: 10px;">Upload Text File</h5>
+                                    <input type="file" name="files" id="inputfile" required>
+                                </div>
+                            </div>
+                            <div class="col-md-12" id="output">
+                            </div>
+
+                            <div class="col-md-6 form-group">
+                                <button class="btn btn-primary w-100" id="filebutton">
+                                    Predict</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+            <div class="col-md-4">
+                <div class="app-holder">
+                    <div class="col">
+                        <h4>Fetal Status Report</h4>
+                        <p><small>Fetal Distress status of corresponding CTG data.</small>
+                            <!--<small id="accuracy" style="visibility: hidden;">Accuracy 91.16%</small>-->
+                        </p>
+                        <div class="report">
+                            <div class="progress-bar"></div>
+                            <div class="current-situation">
+                                <p id="message">No Data Available</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!--end col-->
+        </div>
+        <!--end row-->
+    </div>
+</section>
+
+<script type="text/javascript">
+    var res = null;
+    document.getElementById('inputfile')
+        .addEventListener('change', function () {
+
+            var fr = new FileReader();
+            fr.onload = function () {
+                res = fr.result.split(',').map(function (item) {
+                    return parseInt(item, 10);
+                });
+                var arr = ['Baseline', 'Acceleration', 'Fetal Movement', 'Uterine Contractions', 'Light Decelerations', 'Severe Decelerations', 'Prolongued Decelerations', 'Abnormal Short Term Variability'];
+                var val = '<div class="row">';
+                for (let i = 0; i < 8; i++) {
+                    val = val + "<div class='col-md-6'><div class='form-group position-relative'><label>" + arr[i] + " </label><input type='number' class='form-control' value='" + res[i] + "' readonly></div></div>";
+                }
+                val = val + '</div>'
+                document.getElementById('output').innerHTML = val;
+            }
+            document.getElementById('fupload').style.paddingBottom = "0px"
+            fr.readAsText(this.files[0]);
+        })
+</script>
+<script type="text/javascript">
+    $("#predictform").submit(function (e) {
+        e.preventDefault();
+        var serializedData = $(this).serialize();
+        $.ajax(
+            {
+                type: "POST",
+                url: "{% url 'predict' %}",
+                data: serializedData,
+                success: function (data) {
+                    updateReport(data);
+                    //$('#accuracy').css('visibility', 'visible');
+
+                }
+            }
+        )
+    })
+    $("#fileuploadform").submit(function (e) {
+        e.preventDefault();
+        var csrf = $("input[name=csrfmiddlewaretoken]").val();
+        var tid = {
+            'csrfmiddlewaretoken': csrf,
+            'bline': res[0],
+            'acc': res[1],
+            'fm': res[2],
+            'uc': res[3],
+            'ld': res[4],
+            'sd': res[5],
+            'pd': res[6],
+            'astv': res[7]
+        };
+        $.ajax(
+            {
+                type: "POST",
+                url: "{% url 'predict' %}",
+                data: tid,
+                success: function (data) {
+                    updateReport(data);
+                    //$('#accuracy').css('visibility', 'visible');
+                }
+            }
+        )
+    })
+</script>
+
+<!--end section-->
+<!-- Hero End -->
+
+{% endblock %}
